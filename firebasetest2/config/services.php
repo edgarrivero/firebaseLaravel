@@ -31,4 +31,15 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'firebase' => [
+        'api_Key' => 'AIzaSyD3bzbCK79ATn5JRmoawEEVhp0LB6vcrz4',
+        'auth_Domain' => 'testsert-b4494.firebaseapp.com',
+        'database_url' => 'https://testsert-b4494-default-rtdb.firebaseio.com/',
+        'project_Id' => 'testsert-b4494',
+        'storage_Bucket' => 'testsert-b4494.appspot.com',
+        'messaging_Sender_Id' => '269145679875',
+        'app_Id' => '1:269145679875:web:31022e45368cf76fcc8636',
+        'measurement_Id' => 'G-3ELRTL385G'
+    ]
+
 ];
