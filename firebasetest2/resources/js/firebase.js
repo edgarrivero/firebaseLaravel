@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-analytics.js";
-import { getFirestore, collection, addDoc, getDocs, onSnapshot } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js"
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, onSnapshot, doc } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js"
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -39,11 +39,7 @@ export const getTask = () => getDocs(collection(db, 'comprobante'));
 
 export const onGetTasks = (callback) => onSnapshot(collection(db,'comprobante'), callback)
 
-// export {
-//     onSnapshot,
-//     collection,
-//     db
-// }
+export const deleteTask = (id) => deleteDoc(doc(db,"comprobante",id));
 
 
 

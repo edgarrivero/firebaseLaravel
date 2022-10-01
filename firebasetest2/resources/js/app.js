@@ -1,5 +1,5 @@
 import './bootstrap';
-import { saveTask, getTask, onGetTasks } from './firebase';
+import { saveTask, getTask, onGetTasks, deleteTask } from './firebase';
 
 window.addEventListener('DOMContentLoaded', async() => {
     //const querySnapshot = await getTask();
@@ -14,9 +14,30 @@ window.addEventListener('DOMContentLoaded', async() => {
                                 <td>${doc.data().tipoVehiculo}</td>
                                 <td>${doc.data().cantidad}</td>
                                 <td>${doc.data().created_at}</td>
+                                <td>
+                                    <div class="dropdown">
+                                      <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
+                                        ...
+                                      </button>
+                                      <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
+                                        <li><a class="dropdown-item" href="#">Editar</a></li>
+                                        <li><button type="button" class="dropdown-item btn-delete" data-id="${doc.id}"  >Eliminar</button></li>
+                                      </ul>
+                                    </div>
+
+                                </td>
                             </tr>`;
 
             $("#tableBody").append(records);
+        })
+        const containerBtn = document.getElementById('tableBody');
+        const btnsDelete = containerBtn.querySelectorAll('.btn-delete');
+
+        btnsDelete.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                console.log(e.target.dataset.id);
+                deleteTask(e.target.dataset.id);
+            })
         })
     })
 
@@ -62,57 +83,8 @@ document
                     let jsonObject = JSON.stringify(rowObject);
                     obj = JSON.parse(jsonObject);
                     obj.forEach(function (e, i) {
-
-                        // var model = {
-                        //     name: e.usuario,
-                        //     typeCar: e.typeCar
-                        // }
-                        // console.log(model);
-                        // console.log("sera");
                         saveTask(e.Cantidad,e.FechaCompra,e.TipoVehiculo,e.Usuario);
-
-                        // const querySnapshot = getTask();
-                        // var i = 0;
-                        // querySnapshot.forEach(doc => {
-                        //     i++;
-                        //     let records = `<tr>
-                        //                         <th>${i} </th>
-                        //                         <td>${doc.data().nombreSolicitante} </td>
-                        //                         <td>${doc.data().tipoVehiculo}</td>
-                        //                     </tr>`;
-                        //
-                        //     $("#tableBody").append(records);
-                        // })
-
-                        // $.ajax({
-                        //     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                        //     url: "https://testsert-b4494-default-rtdb.firebaseio.com/users.json",
-                        //     type: 'POST',
-                        //     contentType: "application/json",
-                        //     data: JSON.stringify(model),
-                        //     success: function (r) {
-                        //         console.log(r);
-                        //     },
-                        //     error: function (xhr, status, error) {
-                        //         if (xhr.responseJSON !== undefined && xhr.responseJSON.errorBag !== undefined) {
-                        //             $.each(xhr.responseJSON.errorBag, function (index, value) {
-                        //                 console.log(value)
-                        //             });
-                        //         } else {
-                        //             console.log(xhr.responseJSON)
-                        //         }
-                        //     }
-                        // });
-
-                        // let records = `<tr>
-                        //                     <th>${i} </th>
-                        //                     <td>${e.nombre} </td>
-                        //                     <td>${e.email}</td>
-                        //                 </tr>`;
-                        //
-                        // $("#tableBody").append(records);
                     })
-
                 });
             };
             fileReader.readAsBinaryString(selectedFile);
