@@ -7,30 +7,39 @@
 
     <!-- CSS only -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-iYQeCzEYFbKjA/T2uDLTpkwGzCiq6soy8tYaI1GyVh/UjpbCx/TYkiZhlZB6+fzT" crossorigin="anonymous">
-    <link href="/resources/css/app.css" rel="stylesheet">
 
     <title>Hello, world!</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.15.3/xlsx.full.min.js"></script>
+
+    @vite(['resources/js/app.js', 'resources/css/app.css'])
 </head>
 </head>
-<body class="bg-secondary bg-opacity-25">
+<body class="bg-gray-10">
     <div class="container">
         <div class="row p-4">
             <div class="col   m-3 ">
                 <div class="bg-white p-4 rounded-3 shadow-sm">
                     <h4>Guardar Registro</h4>
-                    <form id="formUser">
+                    <form id="task-form">
                         <div class="mb-3">
-                            <label for="name" class="form-label">Nombre</label>
-                            <input type="text" class="form-control" id="name">
+                            <label for="amount" class="form-label">Cantidad</label>
+                            <input type="number" class="form-control" id="amount">
                         </div>
                         <div class="mb-3">
-                            <label for="email" class="form-label">Email</label>
-                            <input type="email" class="form-control" id="email" aria-describedby="emailHelp">
+                            <label for="date" class="form-label">Fecha</label>
+                            <input type="date" class="form-control" id="date">
+                        </div>
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Nombre del Solicitante</label>
+                            <input type="text" class="form-control" id="name" aria-describedby="typeCar">
+                        </div>
+                        <div class="mb-3">
+                            <label for="typeCar" class="form-label">Tipo de Vehiculo</label>
+                            <input type="text" class="form-control" id="typeCar" aria-describedby="typeCar">
                         </div>
 
-                        <button type="button" class="btn btn-primary" id="submitUser">Guardar</button>
+                        <button type="submit" class="btn btn-primary" id="submitUser2">Guardar</button>
                     </form>
                     <hr>
                     <h4>Subir Excel</h4>
@@ -53,7 +62,9 @@
                     <tr>
                         <th scope="col">#</th>
                         <th scope="col">Nombre</th>
-                        <th scope="col">Email</th>
+                        <th scope="col">Tipo Vehiculo</th>
+                        <th scope="col">Cantidad</th>
+                        <th scope="col">Fecha de compra</th>
                     </tr>
                     </thead>
                     <tbody id="tableBody">
@@ -69,45 +80,45 @@
     <script type="module">
 
 
-    $(document).ready(function () {
-        getAll();
-        var lastIndex = 0;
-        $("#submitUser").on('click', function () {
-            var name = $("#name").val();
-            var email = $("#email").val();//values[1].value;
-
-            var userId = lastIndex + 1;
-
-            var model = {
-                name: name,
-                email: email
-            }
-
-            $.ajax({
-                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                url: "https://testsert-b4494-default-rtdb.firebaseio.com/users.json",
-                type: 'POST',
-                contentType: "application/json",
-                data: JSON.stringify(model),
-                success: function (r) {
-                    console.log(r);
-                },
-                error: function (xhr, status, error) {
-                    if (xhr.responseJSON !== undefined && xhr.responseJSON.errorBag !== undefined) {
-                        $.each(xhr.responseJSON.errorBag, function (index, value) {
-                            console.log(value)
-                        });
-                    } else {
-                        console.log(xhr.responseJSON)
-                    }
-                }
-            });
-
-            lastIndex = userId;
-            $("#formUser input").val("");
-            getAll();
-        })
-    })
+    // $(document).ready(function () {
+    //     getAll();
+    //     var lastIndex = 0;
+    //     $("#submitUser").on('click', function () {
+    //         var name = $("#name").val();
+    //         var email = $("#email").val();//values[1].value;
+    //
+    //         var userId = lastIndex + 1;
+    //
+    //         var model = {
+    //             name: name,
+    //             email: email
+    //         }
+    //
+    //         $.ajax({
+    //             headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+    //             url: "https://testsert-b4494-default-rtdb.firebaseio.com/users.json",
+    //             type: 'POST',
+    //             contentType: "application/json",
+    //             data: JSON.stringify(model),
+    //             success: function (r) {
+    //                 console.log(r);
+    //             },
+    //             error: function (xhr, status, error) {
+    //                 if (xhr.responseJSON !== undefined && xhr.responseJSON.errorBag !== undefined) {
+    //                     $.each(xhr.responseJSON.errorBag, function (index, value) {
+    //                         console.log(value)
+    //                     });
+    //                 } else {
+    //                     console.log(xhr.responseJSON)
+    //                 }
+    //             }
+    //         });
+    //
+    //         lastIndex = userId;
+    //         $("#formUser input").val("");
+    //         getAll();
+    //     })
+    // })
 
     function getAll() {
         $.ajax({
@@ -127,19 +138,17 @@
                     );
                 }
 
-                result.forEach(function (e, i) {
-                    i++;
-                    if (e.charAt(0) === "-") {
-                        let records = `<tr>
-                                                  <th>${i} </th>
-                                                  <th>${r[e].name} </th>
-                                                  <td>${r[e].email}</td>
-                                              </tr>`;
-                        $("#tableBody").append(records);
-                    }
-
-
-                })
+                // result.forEach(function (e, i) {
+                //     i++;
+                //     if (e.charAt(0) === "-") {
+                //         let records = `<tr>
+                //                                   <th>${i} </th>
+                //                                   <th>${r[e].name} </th>
+                //                                   <td>${r[e].email}</td>
+                //                               </tr>`;
+                //         $("#tableBody").append(records);
+                //     }
+                // })
             },
             error: function (xhr, status, error) {
                 if (xhr.responseJSON !== undefined && xhr.responseJSON.errorBag !== undefined) {
@@ -156,74 +165,76 @@
 </script>
 
     <script>
-    var selectedFile;
-
-    var obj = null;
-    document
-        .getElementById("fileUpload")
-        .addEventListener("change", function (event) {
-            selectedFile = event.target.files[0];
-        });
-    document
-        .getElementById("uploadExcel")
-        .addEventListener("click", function () {
-
-            if (selectedFile) {
-
-                var fileReader = new FileReader();
-                fileReader.onload = function (event) {
-                    var data = event.target.result;
-
-                    var workbook = XLSX.read(data, {
-                        type: "binary"
-                    });
-                    workbook.SheetNames.forEach(sheet => {
-                        let rowObject = XLSX.utils.sheet_to_row_object_array(
-                            workbook.Sheets[sheet]
-                        );
-                        let jsonObject = JSON.stringify(rowObject);
-                        obj = JSON.parse(jsonObject);
-                        obj.forEach(function (e, i) {
-
-                            var model = {
-                                name: e.nombre,
-                                email: e.email
-                            }
-
-                            $.ajax({
-                                headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
-                                url: "https://testsert-b4494-default-rtdb.firebaseio.com/users.json",
-                                type: 'POST',
-                                contentType: "application/json",
-                                data: JSON.stringify(model),
-                                success: function (r) {
-                                    console.log(r);
-                                },
-                                error: function (xhr, status, error) {
-                                    if (xhr.responseJSON !== undefined && xhr.responseJSON.errorBag !== undefined) {
-                                        $.each(xhr.responseJSON.errorBag, function (index, value) {
-                                            console.log(value)
-                                        });
-                                    } else {
-                                        console.log(xhr.responseJSON)
-                                    }
-                                }
-                            });
-
-                            // let records = `<tr>
-                            //                     <th>${i} </th>
-                            //                     <td>${e.nombre} </td>
-                            //                     <td>${e.email}</td>
-                            //                 </tr>`;
-                            //
-                            // $("#tableBody").append(records);
-                        })
-
-                    });
-                };
-                fileReader.readAsBinaryString(selectedFile);
-            }
-        });
+    // var selectedFile;
+    //
+    // var obj = null;
+    // document
+    //     .getElementById("fileUpload")
+    //     .addEventListener("change", function (event) {
+    //         selectedFile = event.target.files[0];
+    //     });
+    // document
+    //     .getElementById("uploadExcel")
+    //     .addEventListener("click", function () {
+    //
+    //         if (selectedFile) {
+    //
+    //             var fileReader = new FileReader();
+    //             fileReader.onload = function (event) {
+    //                 var data = event.target.result;
+    //
+    //                 var workbook = XLSX.read(data, {
+    //                     type: "binary"
+    //                 });
+    //                 workbook.SheetNames.forEach(sheet => {
+    //                     let rowObject = XLSX.utils.sheet_to_row_object_array(
+    //                         workbook.Sheets[sheet]
+    //                     );
+    //                     let jsonObject = JSON.stringify(rowObject);
+    //                     obj = JSON.parse(jsonObject);
+    //                     obj.forEach(function (e, i) {
+    //
+    //                         var model = {
+    //                             name: e.nombre,
+    //                             typeCar: e.typeCar
+    //                         }
+    //
+    //                         saveTask(model.name,model.typeCar)
+    //
+    //                         // $.ajax({
+    //                         //     headers: {'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')},
+    //                         //     url: "https://testsert-b4494-default-rtdb.firebaseio.com/users.json",
+    //                         //     type: 'POST',
+    //                         //     contentType: "application/json",
+    //                         //     data: JSON.stringify(model),
+    //                         //     success: function (r) {
+    //                         //         console.log(r);
+    //                         //     },
+    //                         //     error: function (xhr, status, error) {
+    //                         //         if (xhr.responseJSON !== undefined && xhr.responseJSON.errorBag !== undefined) {
+    //                         //             $.each(xhr.responseJSON.errorBag, function (index, value) {
+    //                         //                 console.log(value)
+    //                         //             });
+    //                         //         } else {
+    //                         //             console.log(xhr.responseJSON)
+    //                         //         }
+    //                         //     }
+    //                         // });
+    //
+    //                         // let records = `<tr>
+    //                         //                     <th>${i} </th>
+    //                         //                     <td>${e.nombre} </td>
+    //                         //                     <td>${e.email}</td>
+    //                         //                 </tr>`;
+    //                         //
+    //                         // $("#tableBody").append(records);
+    //                     })
+    //
+    //                 });
+    //             };
+    //             fileReader.readAsBinaryString(selectedFile);
+    //         }
+    //     });
 
 
 </script>
