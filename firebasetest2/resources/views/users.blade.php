@@ -18,8 +18,8 @@
 </head>
 <body class="bg-gray-10">
 <div class="container">
-    <div class="row p-4">
-        <div class="col m-3 ">
+    <div class="row mt-4">
+        <div class="col-sm-12 col-md-4">
             <div class="bg-white p-4 rounded-3 shadow-sm">
                 <h4>Guardar Registro</h4>
                 <!-- Button trigger modal -->
@@ -46,7 +46,7 @@
                 </div>
             </div>
         </div>
-        <div class="col bg-white p-4 m-3 rounded-3 shadow-sm">
+        <div class="col-sm-12 col-md-8 bg-white p-4 rounded-3 shadow-sm">
             <div class="alert alert-success alert-dismissible fade show d-none" role="alert" id="alertCreate">
                 <strong>Registro creado con exito</strong>
                 <p class="fw-bold">Nombre: <span id="nameAlert"></span></p>
