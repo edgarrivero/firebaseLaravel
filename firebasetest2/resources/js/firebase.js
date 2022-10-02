@@ -1,7 +1,7 @@
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-app.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-analytics.js";
-import { getFirestore, collection, addDoc, getDocs, deleteDoc, onSnapshot, doc } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js"
+import { getFirestore, collection, addDoc, getDocs, deleteDoc, onSnapshot, doc, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js"
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -25,7 +25,7 @@ const analytics = getAnalytics(app);
 const db = getFirestore();
 
 export const saveTask = (amount,date,typeCar,user) => {
-    addDoc(collection(db, 'comprobante'), {
+    const docRef = addDoc(collection(db, 'comprobante'), {
         cantidad: amount,
         created_at: date,
         esverificado: true,
@@ -33,6 +33,8 @@ export const saveTask = (amount,date,typeCar,user) => {
         nombreSolicitante: user,
         tipoVehiculo: typeCar
     })
+
+    return docRef;
 }
 
 export const getTask = () => getDocs(collection(db, 'comprobante'));
@@ -41,6 +43,8 @@ export const onGetTasks = (callback) => onSnapshot(collection(db,'comprobante'),
 
 export const deleteTask = (id) => deleteDoc(doc(db,"comprobante",id));
 
+export const editTask = (id) => getDoc(doc(db,"comprobante",id));
 
+export const updateTask = (id, newFields) => updateDoc(doc(db,"comprobante",id),newFields);
 
 
