@@ -11,8 +11,9 @@ import {
     doc,
     getDoc,
     updateDoc,
-    query, orderBy, limit,startAfter,startAt
+    query, orderBy, limit,startAfter,startAt, where
 } from "https://www.gstatic.com/firebasejs/9.10.0/firebase-firestore.js";
+
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -31,6 +32,7 @@ const firebaseConfig = {
 };
 
 const nameDocument = 'comprobante2';
+const usersDocument = 'users';
 
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
@@ -39,32 +41,35 @@ const app = initializeApp(firebaseConfig);
 
 const db = getFirestore();
 
-export const saveTask = (amount,date,typeCar,user) => {
+export const saveTask = (amount,date,typeCar,user,identification) => {
     const docRef = addDoc(collection(db, nameDocument), {
         cantidad: amount,
         created_at: date,
         esverificado: true,
         imagen: "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTuvg8_C7Oo9ZZiP_ok5EYkpmo6e1VjT4w3Lrq9px51uVqsYW2boae0F9c0suMbIvRzuzk&usqp=CAU",
         nombreSolicitante: user,
-        tipoVehiculo: typeCar
+        tipoVehiculo: typeCar,
+        user: identification
     })
     return docRef;
 }
 
 export const getTask = () => getDocs(collection(db, nameDocument));
 
-let q = query(collection(db, nameDocument),orderBy('nombreSolicitante', 'asc'),limit(4));
+let q = query(collection(db, nameDocument),orderBy('nombreSolicitante', 'asc'),limit(20));
 export const onGetTasks = (callback) => onSnapshot(q, callback);
 
 // let documentSnapshots = await getDocs(q);
 // let lastVisible = documentSnapshots.docs[documentSnapshots.docs.length-1];
-// let qNext = query(collection(db, nameDocument),orderBy('nombreSolicitante', 'asc'),startAfter(lastVisible),limit(4));
-export const onGetTasksNext = (callbackNext,lastVisible) => onSnapshot(query(collection(db, nameDocument),orderBy('nombreSolicitante', 'asc'),startAfter(lastVisible),limit(4)), callbackNext);
+// let qNext = query(collection(db, nameDocument),orderBy('nombreSolicitante', 'asc'),startAfter(lastVisible),limit(20));
+export const onGetTasksNext = (callbackNext,lastVisible) => onSnapshot(query(collection(db, nameDocument),orderBy('nombreSolicitante', 'asc'),startAfter(lastVisible),limit(20)), callbackNext);
 
-export const onGetTasksPrevious = (callbackNext,previousVisible) => onSnapshot(query(collection(db, nameDocument),orderBy('nombreSolicitante', 'desc'),startAfter(previousVisible),limit(4)), callbackNext);
+export const onGetTasksPrevious = (callbackNext,previousVisible) => onSnapshot(query(collection(db, nameDocument),orderBy('nombreSolicitante', 'desc'),startAfter(previousVisible),limit(20)), callbackNext);
 
 export const deleteTask = (id) => deleteDoc(doc(db,nameDocument,id));
 
 export const editTask = (id) => getDoc(doc(db,nameDocument,id));
 
 export const updateTask = (id, newFields) => updateDoc(doc(db,nameDocument,id),newFields);
+
+export const getReferenceUser = (identification) => getDocs( query(collection(db, usersDocument), where("identification", "==", identification) ) );

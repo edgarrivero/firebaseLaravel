@@ -1,5 +1,15 @@
 import './bootstrap';
-import {saveTask, getTask, onGetTasks, deleteTask, editTask, updateTask, onGetTasksNext, onGetTasksPrevious} from './firebase';
+import {
+    saveTask,
+    getTask,
+    onGetTasks,
+    deleteTask,
+    editTask,
+    updateTask,
+    onGetTasksNext,
+    onGetTasksPrevious,
+    getReferenceUser
+} from './firebase';
 
 const taskForm = document.getElementById('task-form');
 //const importExcel = document.getElementById('btn-import-excel');
@@ -22,10 +32,11 @@ window.addEventListener('DOMContentLoaded', async() => {
             i++;
             let records = `<tr>
                                 <th>${i} </th>
+                                <td>${doc.data().user} </td>
                                 <td>${doc.data().nombreSolicitante} </td>
                                 <td>${doc.data().tipoVehiculo}</td>
                                 <td>${doc.data().cantidad}</td>
-                                <td>${doc.data().created_at}</td>
+                                <td>${ doc.data().created_at }</td>
                                 <td width="5%">
                                     <div class="dropdown">
                                       <button class="btn dropdown-toggle border-0" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
@@ -40,7 +51,6 @@ window.addEventListener('DOMContentLoaded', async() => {
                                     </div>
                                 </td>
                             </tr>`;
-            console.log(doc);
             $("#tableBody").append(records);
         })
 
@@ -58,8 +68,6 @@ window.addEventListener('DOMContentLoaded', async() => {
         btnsEdits.forEach( (btn) => {
             btn.addEventListener('click', async (e) => {
                 const doc = await editTask(e.target.dataset.id);
-                console.log(doc.data());
-
                 const task = doc.data();
                 taskForm['amount'].value = task.cantidad;
                 taskForm['date'].value = task.created_at;
@@ -216,8 +224,10 @@ taskForm.addEventListener('submit', async (e) => {
         $("#tableBody").empty();
         querySnapshot1.forEach(doc => {
             i++;
+            console.log(doc.data().user)
             let records = `<tr>
                                 <th>${i} </th>
+                                <td>${doc.data().user} </td>
                                 <td>${doc.data().nombreSolicitante} </td>
                                 <td>${doc.data().tipoVehiculo}</td>
                                 <td>${doc.data().cantidad}</td>
@@ -236,7 +246,6 @@ taskForm.addEventListener('submit', async (e) => {
                                     </div>
                                 </td>
                             </tr>`;
-            console.log(doc);
             $("#tableBody").append(records);
         })
 
@@ -282,7 +291,6 @@ document
 document
     .getElementById("uploadExcel")
     .addEventListener("click", function () {
-
         if (selectedFile) {
             let fileReader = new FileReader();
             fileReader.onload = function (event) {
@@ -291,19 +299,32 @@ document
                 let workbook = XLSX.read(data, {
                     type: "binary"
                 });
-                workbook.SheetNames.forEach(sheet => {
+                workbook.SheetNames.forEach( sheet => {
                     let rowObject = XLSX.utils.sheet_to_row_object_array(
                         workbook.Sheets[sheet]
                     );
                     let jsonObject = JSON.stringify(rowObject);
                     obj = JSON.parse(jsonObject);
-                    obj.forEach(function (e, i) {
-                        saveTask(e.Cantidad,e.FechaCompra,e.TipoVehiculo,e.Usuario);
+                    console.log(obj)
+                    obj.forEach(async function (e, i) {
+                        try {
+                            let userRef = await getReferenceUser(e.Identificacion);
+                            //let dateNew = Date.parse(e.FechaCompra);
+                            let dateNew = moment(e.FechaCompra);
+                            let dateNew2 = new Date(e.FechaCompra);
+                            saveTask(e.Cantidad,dateNew2,e.TipoVehiculo,e.Usuario,userRef.docs[0].ref);
+                        }catch (e) {
+                            console.log(e);
+                        }
                     })
                 });
             };
             fileReader.readAsBinaryString(selectedFile);
         }
     });
+
+
+
+
 
 
